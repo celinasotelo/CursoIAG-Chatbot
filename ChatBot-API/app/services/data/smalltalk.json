@@ -1,0 +1,6 @@
+ [
+    {"id": 1, "productName": "Saludo", "description": "Hola, buen día, buenas tardes, cómo estás?"},
+    {"id": 2, "productName": "Agradecimiento", "description": "Gracias, muchas gracias, te agradezco"},
+    {"id": 3, "productName": "Despedida", "description": "Chau, hasta luego, que andes bien, nos vemos"}
+]
+

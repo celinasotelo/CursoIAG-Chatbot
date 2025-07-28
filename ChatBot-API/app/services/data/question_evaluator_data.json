@@ -1,0 +1,5 @@
+[
+    {"id": 1, "question": "¿Qué sofás tienes en azul?", "category": "furniture-questions"},
+    {"id": 2, "question": "¿Cuáles son los horarios de la tienda?", "category": "frequent-questions"},
+    {"id": 3, "question": "Hola, ¿cómo estás?", "category": "smalltalk-questions"}
+]
