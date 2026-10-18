@@ -1,0 +1,20 @@
+# Probado con Python 3.13
+# Instalar desde la carpeta ChatBot-API:  pip install -r requirements.txt
+
+# API web
+fastapi==0.115.14
+uvicorn==0.35.0
+pydantic==2.13.5
+python-dotenv==1.1.1
+
+# LLM y RAG
+openai==1.93.0
+langchain==0.3.26
+langchain-openai==0.3.27
+langchain-community==0.3.27
+langchain-text-splitters==0.3.8
+langchain-chroma==0.2.5
+chromadb==1.0.15
+
+# Solo para la versión 1 (sChatbot.py, no registrada en main.py)
+# docarray==0.41.0
