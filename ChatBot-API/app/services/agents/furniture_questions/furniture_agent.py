@@ -7,7 +7,6 @@ from langchain.schema import Document
 from typing import List, Union
 from app.services.langchain_service import LanchainService
 import os
-from langchain.memory import ConversationBufferMemory
 
 class FurnitureAgent(BaseAgent):
     layer = 'furniture_questions'
@@ -21,13 +20,13 @@ class FurnitureAgent(BaseAgent):
             persist_directory="./chroma_db"
         )
         self.langchain_service = LanchainService()
-        self.memory = ConversationBufferMemory(return_messages=True)
 
-    async def generateResponse(self, input_text: str) -> str:
+    async def generateResponse(self, input_text: str, chat_id: str) -> str:
         context = self.searchBySimilarity(input_text)
-        self.memory.chat_memory.add_user_message(input_text)
-        respuesta = await self.langchain_service.chat(self, input_text, context, memory=self.memory)
-        self.memory.chat_memory.add_ai_message(respuesta)
+        memory = self.getMemory(chat_id)
+        memory.chat_memory.add_user_message(input_text)
+        respuesta = await self.langchain_service.chat(self, input_text, context, memory=memory)
+        memory.chat_memory.add_ai_message(respuesta)
         return respuesta
 
     def uploadDatabase(self, new_data: Union[str, List[dict]]):

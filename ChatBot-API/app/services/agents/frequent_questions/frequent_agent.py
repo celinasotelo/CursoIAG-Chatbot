@@ -6,7 +6,6 @@ from langchain.schema import Document
 from typing import List, Union
 from app.services.langchain_service import LanchainService 
 import os
-from langchain.memory import ConversationBufferMemory
 
 class FrequentQuestionAgent(BaseAgent):
     layer = 'frequent_questions'
@@ -16,16 +15,15 @@ class FrequentQuestionAgent(BaseAgent):
         self.chroma_client = Client(Settings(chroma_server_host="localhost", chroma_server_http_port="8000"))
         self.collection = self.chroma_client.get_or_create_collection(name=self.collection_name)
         self.langchain_service = LanchainService()
-        self.memory = ConversationBufferMemory(return_messages=True)
 
-    async def generateResponse(self, input_text: str) -> str:
+    async def generateResponse(self, input_text: str, chat_id: str) -> str:
         context = self.searchBySimilarity(input_text)
         concatenated_docs = ""
         for doc_list in context['documents']:
             for doc in doc_list:
                 concatenated_docs += doc + "\n"   
 
-        respuesta = await self.langchain_service.chat(self, input_text, concatenated_docs, memory=self.memory)
+        respuesta = await self.langchain_service.chat(self, input_text, concatenated_docs, memory=self.getMemory(chat_id))
         return respuesta
         
     def uploadDatabase(self, new_data: Union[str, List[str]]):

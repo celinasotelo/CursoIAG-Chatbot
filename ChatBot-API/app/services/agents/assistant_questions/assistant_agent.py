@@ -2,7 +2,6 @@ from chromadb import Client
 from app.services.agents.base_agent import BaseAgent
 from chromadb.config import Settings
 from app.services.langchain_service import LanchainService 
-from langchain.memory import ConversationBufferMemory
 
 class AssistantQuestionAgent(BaseAgent):
     layer = 'assistant_questions'
@@ -17,7 +16,7 @@ class AssistantQuestionAgent(BaseAgent):
         
         self.derivation_keywords = ["humano", "asesor", "persona", "ayuda real", "problema distinto"]
 
-    async def generateResponse(self, question: str) -> str:
+    async def generateResponse(self, question: str, chat_id: str) -> str:
         lower_question = question.lower()
         
         if any(palabra in lower_question for palabra in self.derivation_keywords):
@@ -27,7 +26,7 @@ class AssistantQuestionAgent(BaseAgent):
                 "https://wa.me/5493795066238"
             )
         try:
-            response = await self.langchain_service.chat(self, question, "")
+            response = await self.langchain_service.chat(self, question, "", memory=self.getMemory(chat_id))
             return response
         except Exception:
             return "Estoy teniendo problemas para responder eso ahora mismo. ¿Querés que te derive con un asesor humano?"

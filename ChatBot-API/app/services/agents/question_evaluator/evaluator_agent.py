@@ -22,14 +22,12 @@ class QuestionEvaluator(BaseAgent):
         )
         self.langchain_service = LanchainService()
 
-        self.memory = ConversationBufferMemory(return_messages=True)
-
-    async def generateResponse(self, input_text: str, layer: str = "") -> str:
+    async def generateResponse(self, input_text: str, chat_id: str = "") -> str:
         context = self.searchBySimilarity(input_text)
-        self.memory.chat_memory.add_user_message(input_text)
-        respuesta = await self.langchain_service.chat(self, input_text, context, memory=self.memory)
-        self.memory.chat_memory.add_ai_message(respuesta)
-        return respuesta
+        # Memoria vacía en cada llamada: la clasificación depende solo del mensaje actual
+        memory = ConversationBufferMemory(return_messages=True)
+        respuesta = await self.langchain_service.chat(self, input_text, context, memory=memory)
+        return respuesta.strip()
 
     def uploadDatabase(self, new_data: Union[str, List[dict]]) -> str:
         if isinstance(new_data, str):
