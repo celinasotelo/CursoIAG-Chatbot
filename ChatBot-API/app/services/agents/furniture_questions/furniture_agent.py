@@ -42,17 +42,18 @@ class FurnitureAgent(BaseAgent):
         documents = []
         for product in new_data:
             chunks = text_splitter.split_text(product['description'])
-            for chunk in chunks:
+            for i, chunk in enumerate(chunks):
                 documents.append(
                     Document(
                         page_content=f"{product['productName']}\n{chunk}\nPrecio: {product['price']}",
-                        metadata={"id": str(product["id"])}
+                        metadata={"id": f"{product['id']}-{i}"}
                     )
                 )
-        
+
         print("Documentos a insertar: " + str(len(documents)))
-        
-        self.vectorstore.add_documents(documents)
+
+        # ids fijos: recargar los datos reemplaza en vez de duplicar
+        self.vectorstore.add_documents(documents, ids=[doc.metadata["id"] for doc in documents])
         
         return "Base vectorial actualizada."
 

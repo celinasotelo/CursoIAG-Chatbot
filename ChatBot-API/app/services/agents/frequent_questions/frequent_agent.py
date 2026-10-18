@@ -1,6 +1,5 @@
-from chromadb import Client
+from chromadb import PersistentClient
 from app.services.agents.base_agent import BaseAgent
-from chromadb.config import Settings
 from langchain_community.embeddings import OpenAIEmbeddings
 from langchain.schema import Document
 from typing import List, Union
@@ -12,7 +11,7 @@ class FrequentQuestionAgent(BaseAgent):
     collection_name = 'frequent-question-collection'
 
     def __init__(self):
-        self.chroma_client = Client(Settings(chroma_server_host="localhost", chroma_server_http_port="8000"))
+        self.chroma_client = PersistentClient(path="./chroma_db_agents")
         self.collection = self.chroma_client.get_or_create_collection(name=self.collection_name)
         self.langchain_service = LanchainService()
 
@@ -39,7 +38,7 @@ class FrequentQuestionAgent(BaseAgent):
 
         print("frecuent information:" + str(documents[0].page_content))
 
-        self.collection.add(
+        self.collection.upsert(
             ids=["1"],
             documents=documents[0].page_content,
             metadatas=documents[0].metadata

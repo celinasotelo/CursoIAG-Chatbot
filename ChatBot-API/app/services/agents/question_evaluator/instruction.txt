@@ -26,8 +26,8 @@ Q: Esto no soluciona mi problema
 A: assistant-questions
 
 Q: Hola 
-A: small-talk
+A: smalltalk-questions
 
 Q: Buenas tardes, cómo estás?  
-A: small-talk
+A: smalltalk-questions
 

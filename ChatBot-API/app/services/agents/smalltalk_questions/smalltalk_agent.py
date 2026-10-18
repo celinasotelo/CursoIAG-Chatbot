@@ -1,10 +1,8 @@
-from chromadb import Client
-from chromadb.config import Settings
+from chromadb import PersistentClient
 from langchain.schema import Document
 from langchain_text_splitters import CharacterTextSplitter
 from app.services.agents.base_agent import BaseAgent
 from app.services.langchain_service import LanchainService
-import random
 from typing import List, Union
 import json 
 
@@ -13,7 +11,7 @@ class SmallTalkAgent(BaseAgent):
     collection_name = 'smalltalk-collection'
 
     def __init__(self):
-        self.chroma_client = Client(Settings(chroma_server_host="localhost", chroma_server_http_port="8000"))
+        self.chroma_client = PersistentClient(path="./chroma_db_agents")
         self.collection = self.chroma_client.get_or_create_collection(name=self.collection_name)
         self.langchain_service = LanchainService()
 
@@ -38,16 +36,17 @@ class SmallTalkAgent(BaseAgent):
 
         for item in new_data:
             chunks = text_splitter.split_text(item['description'])
-            for chunk in chunks:
+            for i, chunk in enumerate(chunks):
                 documents.append(
                     Document(
                         page_content=f"{item['productName']}\n{chunk}",
-                        metadata={"id": str(item["id"])}
+                        metadata={"id": f"{item['id']}-{i}"}
                     )
                 )
 
-        self.collection.add(
-            ids=[doc.metadata['id'] + str(random.randint(1, 10000)) for doc in documents],
+        # upsert con ids fijos: recargar los datos reemplaza en vez de duplicar
+        self.collection.upsert(
+            ids=[doc.metadata['id'] for doc in documents],
             documents=[doc.page_content for doc in documents],
             metadatas=[doc.metadata for doc in documents]
         )
